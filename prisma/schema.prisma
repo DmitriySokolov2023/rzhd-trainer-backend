@@ -15,15 +15,41 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  email    String @unique
+  login    String    @unique
   password String
+  role     Role      @default(STUDENT)
+  Attempt  Attempt[]
 }
 
-model Tasks {
+model Task {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  task   String
-  status Boolean @default(false)
+  title         String
+  body          String[]
+  imageUrl      String?
+  durationMin   Int       @default(2)
+  correctAnswer String[]
+  attempts      Attempt[]
+}
+
+model Attempt {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  answer      String
+  isCorrect   Boolean
+  submittedAt DateTime
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  task   Task @relation(fields: [taskId], references: [id])
+  taskId Int
+}
+
+enum Role {
+  ADMIN
+  STUDENT
 }

@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler'
 import { prisma } from '../prisma.js'
 
 export const getAllTasks = asyncHandler(async (req, res) => {
-	const tasks = await prisma.tasks.findMany({
+	const tasks = await prisma.task.findMany({
 		orderBy: {
 			id: 'asc'
 		}
@@ -12,46 +12,61 @@ export const getAllTasks = asyncHandler(async (req, res) => {
 	res.json(tasks)
 })
 export const getTasksById = asyncHandler(async (req, res) => {
-	const tasks = await prisma.tasks.findUnique({
+	const task = await prisma.task.findUnique({
 		where: {
 			id: +req.params.id
 		}
 	})
 
-	res.json(tasks)
+	res.json(task)
 })
+
+export const checkAnswer = asyncHandler(async (req, res) => {
+	const task = await prisma.task.findUnique({
+		where: {
+			id: +req.params.id
+		}
+	})
+	res.json(task)
+})
+
 export const addTask = asyncHandler(async (req, res) => {
-	const { task } = req.body
-	const tasks = await prisma.tasks.create({
+	const task = await prisma.task.create({
 		data: {
-			task
+			title: req.body.title,
+			body: req.body.body,
+			imageUrl: req.body.imageUrl,
+			durationMin: req.body.durationMin,
+			correctAnswer: req.body.correctAnswer
 		}
 	})
 
-	res.json(tasks)
+	res.json(task)
 })
 
-export const updateTasks = asyncHandler(async (req, res) => {
-	const { task, status } = req.body
-	const tasks = await prisma.tasks.update({
+export const updateTask = asyncHandler(async (req, res) => {
+	const task = await prisma.task.update({
 		where: {
 			id: +req.params.id
 		},
 		data: {
-			task,
-			status
+			title: req.body.title,
+			body: req.body.body,
+			imageUrl: req.body.imageUrl,
+			durationMin: req.body.durationMin,
+			correctAnswer: req.body.correctAnswer
 		}
 	})
 
-	res.json(tasks)
+	res.json(task)
 })
 
-export const deleteTasks = asyncHandler(async (req, res) => {
-	const tasks = await prisma.tasks.delete({
+export const deleteTask = asyncHandler(async (req, res) => {
+	const task = await prisma.task.delete({
 		where: {
 			id: +req.params.id
 		}
 	})
 
-	res.json(tasks)
+	res.json(task)
 })
