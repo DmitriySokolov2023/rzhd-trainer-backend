@@ -41,6 +41,24 @@ export const addTask = asyncHandler(async (req, res) => {
 		}
 	})
 
+	const users = await prisma.user.findMany({
+		where: {
+			role: 'STUDENT'
+		}
+	})
+
+	const userTaskStatuses = users.map(user => ({
+		userId: user.id,
+		taskId: task.id,
+		answer: '',
+		status: false
+	}))
+
+	if (userTaskStatuses.length > 0) {
+		await prisma.userTaskStatus.createMany({
+			data: userTaskStatuses
+		})
+	}
 	res.json(task)
 })
 

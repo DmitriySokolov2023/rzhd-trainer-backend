@@ -25,6 +25,19 @@ export const registerUser = asyncHandler(async (req, res) => {
 		}
 	})
 	const token = generateToken(user.id)
+
+	const tasks = await prisma.task.findMany()
+
+	const userTaskStatuses = tasks.map(task => ({
+		userId: user.id,
+		taskId: task.id,
+		status: false,
+		answer: ''
+	}))
+
+	await prisma.userTaskStatus.createMany({
+		data: userTaskStatuses
+	})
 	res.json({ user, token })
 })
 

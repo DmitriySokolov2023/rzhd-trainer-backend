@@ -5,9 +5,9 @@ import morgan from 'morgan'
 
 import { errorHandler, notFound } from './app/middleware/error.middleware.js'
 
-import attemptsRoutes from './app/attempts/attempts.routes.js'
 import authRoutes from './app/auth/auth.routes.js'
 import { prisma } from './app/prisma.js'
+import statusRoutes from './app/status/status.routes.js'
 import tasksRoutes from './app/tasks/tasks.routes.js'
 
 dotenv.config()
@@ -20,7 +20,7 @@ async function main() {
 	app.use(express.json())
 	app.use('/api/task', tasksRoutes)
 	app.use('/api/auth', authRoutes)
-	app.use('/api/attempt', attemptsRoutes)
+	app.use('/api/status', statusRoutes)
 
 	app.use(notFound)
 	app.use(errorHandler)
