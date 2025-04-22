@@ -6,17 +6,28 @@ export const getUserTasksWithStatus = asyncHandler(async (req, res) => {
 	const tasksWithStatus = await prisma.task.findMany({
 		include: {
 			userTaskStatus: {
-				where: { userId: +req.params.id }
+				where: { userId: +req.user.userId }
 			}
 		}
 	})
 
 	res.json(tasksWithStatus)
 })
+export const getUserTasksWithStatusByLogin = asyncHandler(async (req, res) => {
+	const tasksWithStatus = await prisma.task.findUnique({
+		include: {
+			userTaskStatus: {
+				where: { userId: +req.params.login }
+			}
+		}
+	})
 
+	res.json(tasksWithStatus)
+})
 export const updateUserTaskStatus = asyncHandler(async (req, res) => {
+	let correct = false
 	const { answer } = req.body
-	const createAnswer = await prisma.task.findUnique({
+	const { correctAnswer } = await prisma.task.findUnique({
 		where: {
 			id: +req.params.id
 		},
@@ -24,24 +35,22 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 			correctAnswer: true
 		}
 	})
-	if (answer === createAnswer.correctAnswer) {
-		console.log(req.user)
-		const updateStatus = await prisma.userTaskStatus.update({
-			where: {
-				userId_taskId: {
-					userId: +req.user.userId,
-					taskId: +req.params.id
-				}
-			},
-			data: {
-				answer: createAnswer.correctAnswer,
-				status: true
+	if (answer === correctAnswer) {
+		correct = true
+	} else correct = false
+
+	const updateStatus = await prisma.userTaskStatus.update({
+		where: {
+			userId_taskId: {
+				userId: +req.user.userId,
+				taskId: +req.params.id
 			}
-		})
-		res.json(updateStatus)
-	} else {
-		res.json({
-			message: 'Ответ неверный'
-		})
-	}
+		},
+		data: {
+			answer: answer,
+			status: correct
+		}
+	})
+
+	res.json(updateStatus)
 })
