@@ -14,10 +14,16 @@ export const getUserTasksWithStatus = asyncHandler(async (req, res) => {
 	res.json(tasksWithStatus)
 })
 export const getUserTasksWithStatusByLogin = asyncHandler(async (req, res) => {
-	const tasksWithStatus = await prisma.task.findUnique({
+	const { id } = await prisma.user.findUnique({
+		where: {
+			login: req.body.login
+		}
+	})
+
+	const tasksWithStatus = await prisma.task.findMany({
 		include: {
 			userTaskStatus: {
-				where: { userId: +req.params.login }
+				where: { userId: +id }
 			}
 		}
 	})

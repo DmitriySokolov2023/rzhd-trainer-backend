@@ -5,6 +5,7 @@ import { requireAdmin } from '../middleware/role.middleware.js'
 
 import {
 	getUserTasksWithStatus,
+	getUserTasksWithStatusByLogin,
 	updateUserTaskStatus
 } from './status.controller.js'
 
@@ -12,5 +13,5 @@ const router = express.Router()
 
 router.route('/').get(protect, getUserTasksWithStatus)
 router.route('/:id').put(protect, updateUserTaskStatus)
-router.route('/:login').put(protect, requireAdmin, updateUserTaskStatus)
+router.route('/user').get(protect, requireAdmin, getUserTasksWithStatusByLogin)
 export default router
