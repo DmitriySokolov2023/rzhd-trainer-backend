@@ -29,7 +29,7 @@ model Task {
   title          String
   body           String
   imageUrl       String?
-  correctAnswer  String
+  correctAnswer  Json
   userTaskStatus UserTaskStatus[]
 }
 
@@ -38,7 +38,7 @@ model UserTaskStatus {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  answer   String
+  answer   Json
   status   Boolean
   deadline DateTime?
   User     User?     @relation(fields: [userId], references: [id])

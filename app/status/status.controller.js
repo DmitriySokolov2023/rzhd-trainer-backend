@@ -31,8 +31,9 @@ export const getUserTasksWithStatusByLogin = asyncHandler(async (req, res) => {
 	res.json(tasksWithStatus)
 })
 export const updateUserTaskStatus = asyncHandler(async (req, res) => {
-	let correct = false
-	const { answer } = req.body
+	const errors = []
+	const { userAnswer } = req.body
+	console.log(req.body)
 	const { correctAnswer } = await prisma.task.findUnique({
 		where: {
 			id: +req.params.id
@@ -41,22 +42,26 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 			correctAnswer: true
 		}
 	})
-	if (answer === correctAnswer) {
-		correct = true
-	} else correct = false
 
-	const updateStatus = await prisma.userTaskStatus.update({
-		where: {
-			userId_taskId: {
-				userId: +req.user.userId,
-				taskId: +req.params.id
-			}
-		},
-		data: {
-			answer: answer,
-			status: correct
+	for (const key in correctAnswer) {
+		if ((userAnswer[key] || '').trim() !== correctAnswer[key].trim()) {
+			errors.push(key)
 		}
-	})
+	}
 
-	res.json(updateStatus)
+	if (Object.keys(errors).length === 0) {
+		const updateStatus = await prisma.userTaskStatus.update({
+			where: {
+				userId_taskId: {
+					userId: +req.user.userId,
+					taskId: +req.params.id
+				}
+			},
+			data: {
+				answer: userAnswer,
+				status: Object.keys(errors).length === 0
+			}
+		})
+		res.json(updateStatus)
+	} else res.json(errors)
 })
