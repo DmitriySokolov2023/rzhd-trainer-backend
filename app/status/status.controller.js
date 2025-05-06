@@ -13,6 +13,19 @@ export const getUserTasksWithStatus = asyncHandler(async (req, res) => {
 
 	res.json(tasksWithStatus)
 })
+export const getUserTaskStatusById = asyncHandler(async (req, res) => {
+	const id = +req.params.id
+	console.log(+req.params.id)
+	const { userTaskStatus } = await prisma.task.findFirst({
+		include: {
+			userTaskStatus: {
+				where: { taskId: id }
+			}
+		}
+	})
+
+	res.json(userTaskStatus[0])
+})
 export const getUserTasksWithStatusByLogin = asyncHandler(async (req, res) => {
 	const { id } = await prisma.user.findUnique({
 		where: {
@@ -44,7 +57,10 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 	})
 
 	for (const key in correctAnswer) {
-		if ((userAnswer[key] || '').trim() !== correctAnswer[key].trim()) {
+		if (
+			(userAnswer[key] || '').trim().toLowerCase() !==
+			correctAnswer[key].trim().toLowerCase()
+		) {
 			errors.push(key)
 		}
 	}
@@ -62,6 +78,6 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 				status: Object.keys(errors).length === 0
 			}
 		})
-		res.json(updateStatus)
+		res.json({ message: 'Зачтено' })
 	} else res.json(errors)
 })
