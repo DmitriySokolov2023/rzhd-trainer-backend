@@ -28,7 +28,6 @@ async function main() {
 		})
 	)
 	app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
-	console.log(path.join(__dirname, '/uploads'))
 	app.use('/api/task', tasksRoutes)
 	app.use('/api/auth', authRoutes)
 	app.use('/api/status', statusRoutes)

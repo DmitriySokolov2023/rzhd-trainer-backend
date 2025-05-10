@@ -53,7 +53,6 @@ export const getUserTasksWithStatusByLogin = asyncHandler(async (req, res) => {
 export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 	const errors = []
 	const { userAnswer } = req.body
-	console.log(req.body)
 	const { correctAnswer } = await prisma.task.findUnique({
 		where: {
 			id: +req.params.id

@@ -31,13 +31,19 @@ export const checkAnswer = asyncHandler(async (req, res) => {
 })
 
 export const addTask = asyncHandler(async (req, res) => {
+	const { title, body, imageUrl } = req.body
+	let correctAnswer = {}
+	try {
+		correctAnswer = JSON.parse(req.body.correctAnswer || '{}')
+	} catch (error) {
+		return res.status(400).json({ message: 'Неверный формат correctAnswer' })
+	}
 	const task = await prisma.task.create({
 		data: {
-			title: req.body.title,
-			body: req.body.body,
-			imageUrl: req.body.imageUrl,
-			durationMin: req.body.durationMin,
-			correctAnswer: req.body.correctAnswer
+			title,
+			body,
+			imageUrl: imageUrl === 'null' ? null : imageUrl,
+			correctAnswer
 		}
 	})
 
@@ -63,16 +69,23 @@ export const addTask = asyncHandler(async (req, res) => {
 })
 
 export const updateTask = asyncHandler(async (req, res) => {
+	const { title, body, imageUrl } = req.body
+	let correctAnswer = {}
+	try {
+		correctAnswer = JSON.parse(req.body.correctAnswer || '{}')
+	} catch (error) {
+		return res.status(400).json({ message: 'Неверный формат correctAnswer' })
+	}
+
 	const task = await prisma.task.update({
 		where: {
 			id: +req.params.id
 		},
 		data: {
-			title: req.body.title,
-			body: req.body.body,
-			imageUrl: req.body.imageUrl,
-			durationMin: req.body.durationMin,
-			correctAnswer: req.body.correctAnswer
+			title,
+			body,
+			imageUrl,
+			correctAnswer
 		}
 	})
 
