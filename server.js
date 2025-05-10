@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import morgan from 'morgan'
+import path from 'path'
 
 import { errorHandler, notFound } from './app/middleware/error.middleware.js'
 
@@ -14,6 +15,7 @@ import tasksRoutes from './app/tasks/tasks.routes.js'
 dotenv.config()
 
 const app = express()
+const __dirname = path.resolve()
 
 async function main() {
 	if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))
@@ -25,6 +27,8 @@ async function main() {
 			credentials: true
 		})
 	)
+	app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+	console.log(path.join(__dirname, '/uploads'))
 	app.use('/api/task', tasksRoutes)
 	app.use('/api/auth', authRoutes)
 	app.use('/api/status', statusRoutes)
