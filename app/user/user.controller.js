@@ -23,27 +23,47 @@ export const getUserById = asyncHandler(async (req, res) => {
 	res.json(user)
 })
 
-export const updateUserById = asyncHandler(async (req, res) => {
+export const updateUser = asyncHandler(async (req, res) => {
+	const { id } = req.params
 	const { login, password } = req.body
+
+	const dataToUpdate = {}
+
+	if (login) {
+		// Проверка, что login уникален
+		const existingUser = await prisma.user.findUnique({
+			where: { login }
+		})
+
+		if (existingUser && existingUser.id !== id) {
+			res.status(400)
+			throw new Error('Пользователь с таким логином уже существует')
+		}
+
+		dataToUpdate.login = login
+	}
+
+	if (password) {
+		dataToUpdate.password = await hash(password)
+	}
+
+	if (Object.keys(dataToUpdate).length === 0) {
+		return
+	}
+
 	const user = await prisma.user.update({
-		where: {
-			id: +req.params.id
-		},
-		data: {
-			login,
-			password: await hash(password)
-		}
+		where: { id: +id },
+		data: dataToUpdate
 	})
 
-	res.json(user)
+	res.json({ user })
 })
+export const deleteUser = asyncHandler(async (req, res) => {
+	const { id } = req.params
 
-export const removeUserById = asyncHandler(async (req, res) => {
 	const user = await prisma.user.delete({
-		where: {
-			id: +req.params.id
-		}
+		where: { id: +id }
 	})
 
-	res.json(user)
+	res.json({ user })
 })

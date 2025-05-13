@@ -11,6 +11,7 @@ import authRoutes from './app/auth/auth.routes.js'
 import { prisma } from './app/prisma.js'
 import statusRoutes from './app/status/status.routes.js'
 import tasksRoutes from './app/tasks/tasks.routes.js'
+import userRoutes from './app/user/user.routes.js'
 
 dotenv.config()
 
@@ -31,6 +32,7 @@ async function main() {
 	app.use('/api/task', tasksRoutes)
 	app.use('/api/auth', authRoutes)
 	app.use('/api/status', statusRoutes)
+	app.use('/api/user', userRoutes)
 
 	app.use(notFound)
 	app.use(errorHandler)

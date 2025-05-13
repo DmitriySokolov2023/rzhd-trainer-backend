@@ -13,6 +13,27 @@ export const getUserTasksWithStatus = asyncHandler(async (req, res) => {
 
 	res.json(tasksWithStatus)
 })
+
+export const updateAllDeadlines = asyncHandler(async (req, res) => {
+	const userId = +req.params.id
+	const { deadline } = req.body
+
+	if (!deadline) {
+		return res.status(400).json({ message: 'Deadline is required' })
+	}
+
+	try {
+		await prisma.userTaskStatus.updateMany({
+			where: { userId },
+			data: { deadline: new Date(deadline) }
+		})
+
+		res.json({ message: 'Deadlines updated successfully' })
+	} catch (error) {
+		console.error(error)
+		res.status(500).json({ message: 'Internal server error' })
+	}
+})
 export const getUserTaskStatusById = asyncHandler(async (req, res) => {
 	const userId = +req.user.userId // замените на актуальный userId
 	const taskId = +req.params.id
@@ -26,7 +47,7 @@ export const getUserTaskStatusById = asyncHandler(async (req, res) => {
 				where: {
 					userId: userId
 				},
-				take: 1 // Так как по схеме у тебя @@unique([userId, taskId])
+				take: 1
 			}
 		}
 	})
