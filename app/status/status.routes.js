@@ -4,6 +4,7 @@ import { protect } from '../middleware/auth.middleware.js'
 import { requireAdmin } from '../middleware/role.middleware.js'
 
 import {
+	getUserDeadlines,
 	getUserTaskStatusById,
 	getUserTasksWithStatus,
 	getUserTasksWithStatusByLogin,
@@ -17,5 +18,6 @@ router.route('/').get(protect, getUserTasksWithStatus)
 router.route('/:id').get(protect, getUserTaskStatusById)
 router.route('/:id').put(protect, updateUserTaskStatus)
 router.route('/deadline/:id').post(protect, updateAllDeadlines)
+router.route('/deadline/:id').get(protect, getUserDeadlines)
 router.route('/user').get(protect, requireAdmin, getUserTasksWithStatusByLogin)
 export default router
