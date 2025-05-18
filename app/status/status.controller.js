@@ -110,13 +110,15 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 			correctAnswer: true
 		}
 	})
-
+	console.log(userAnswer)
+	console.log(correctAnswer)
 	for (const key in correctAnswer) {
 		if (
-			(userAnswer[key] || '').trim().toLowerCase() !==
-			correctAnswer[key].trim().toLowerCase()
+			(userAnswer[key] || '').toLowerCase().replace(/\s+/g, '') !==
+			correctAnswer[key].toLowerCase().replace(/\s+/g, '')
 		) {
 			errors.push(key)
+			console.log(errors)
 		}
 	}
 
@@ -135,4 +137,16 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 		})
 		res.json(['Зачтено'])
 	} else res.json(errors)
+})
+
+export const getKey = asyncHandler(async (req, res) => {
+	const { correctAnswer } = await prisma.task.findUnique({
+		where: {
+			id: +req.params.id
+		},
+		select: {
+			correctAnswer: true
+		}
+	})
+	res.json(Object.keys(correctAnswer))
 })
