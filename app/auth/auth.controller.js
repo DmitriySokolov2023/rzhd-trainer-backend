@@ -7,7 +7,6 @@ import { generateToken } from './generate-token.js'
 
 export const registerUser = asyncHandler(async (req, res) => {
 	const { login, password, role, deadline } = req.body
-	console.log(req.body)
 	const isHaveUser = await prisma.user.findUnique({
 		where: {
 			login

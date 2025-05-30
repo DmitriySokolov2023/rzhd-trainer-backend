@@ -16,7 +16,6 @@ dotenv.config()
 
 const app = express()
 const __dirname = path.resolve()
-console.log(__dirname)
 
 async function main() {
 	if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))

@@ -118,7 +118,6 @@ export const updateUserTaskStatus = asyncHandler(async (req, res) => {
 			correctAnswer[key].toLowerCase().replace(/\s+/g, '')
 		) {
 			errors.push(key)
-			console.log(errors)
 		}
 	}
 
